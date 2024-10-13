@@ -83,4 +83,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Acknowledgments
 
 - Inspired by the Discord API documentation.
-- Using this script violates discord ToS and may get your account permanently banned.
+- Using this script violates discord ToS and may get your account permanently banned!.
