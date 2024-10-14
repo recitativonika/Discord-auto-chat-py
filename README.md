@@ -16,8 +16,8 @@ This is a simple Discord bot script that allows you to send messages to multiple
 
 1. **Clone the repository** (or download the script):
     ```bash
-    git clone <https://github.com/recitativonika/Discord-auto-chat.git>
-    cd <Discord-auto-chat>
+    git clone <https://github.com/recitativonika/Discord-auto-chat-py.git>
+    cd <Discord-auto-chat-py>
     ```
 
 2. **Install the required libraries**:
@@ -25,7 +25,7 @@ This is a simple Discord bot script that allows you to send messages to multiple
     pip install -r requirements.txt
     ```
 
-3. **Create a `config.yaml` file** in the same directory as the script with the following structure:
+3. **Edit `config.yaml` file** in the same directory as the script with the following structure:
     ```yaml
     token:
       - "your_token_1"
