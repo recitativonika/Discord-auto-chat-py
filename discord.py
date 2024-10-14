@@ -7,10 +7,8 @@ import time
 import random
 from colorama import Fore, Style, init
 
-# Initialize colorama
 init(autoreset=True)
 
-# ASCII Art for "Simple DiscordBot"
 ascii_art = r"""
    _____ _                 _        _____  _                       _ ____        _   
   / ____(_)               | |      |  __ \(_)                     | |  _ \      | |  
@@ -25,7 +23,7 @@ ascii_art = r"""
 print(Fore.CYAN + ascii_art)
 print(Fore.GREEN + "Simple DiscordBot")
 print(Fore.MAGENTA + "github.com/reciativonika")
-print("")  # Add an empty line for better readability
+print("")
 
 class DiscordBot:
     def __init__(self, token):
@@ -46,7 +44,7 @@ def load_config(file_path='config.yaml'):
     with open(file_path) as cfg:
         return yaml.load(cfg, Loader=yaml.FullLoader)
 
-def load_messages(file_path='chat.txt'):  # Changed to chat.txt
+def load_messages(file_path='chat.txt'):
     with open(file_path, 'r') as msg_file:
         messages = [line.strip() for line in msg_file if line.strip()]
     return messages
@@ -55,7 +53,6 @@ def main():
     config = load_config()
     messages = load_messages()
 
-    # Validate configuration
     if not config.get('token'):
         print(Fore.RED + "[ERROR] No bot token provided in config.yaml!")
         sys.exit()
@@ -65,33 +62,36 @@ def main():
         sys.exit()
 
     if not messages:
-        print(Fore.RED + "[ERROR] No messages found in chat.txt!")  # Changed to chat.txt
+        print(Fore.RED + "[ERROR] No messages found in chat.txt!")
         sys.exit()
 
-    # Get delays from configuration
-    token_delay = config.get('token_delay', 5)  # Delay for each token
-    message_delay = config.get('message_delay', 2)  # Delay for each message
-    restart_delay = config.get('restart_delay', 10)  # Delay before restarting
+    token_delay = config.get('token_delay', 5)
+    message_delay = config.get('message_delay', 2)
+    restart_delay = config.get('restart_delay', 10)
 
     while True:
         for token in config['token']:
-            bot = DiscordBot(token)
+            try:
+                bot = DiscordBot(token)
 
-            for channel in config['channel_id']:
-                # Randomly select a message from the loaded messages
-                custom_message = random.choice(messages)
-                response = bot.send_message(channel, custom_message)
+                for channel in config['channel_id']:
+                    
+                    custom_message = random.choice(messages)
+                    response = bot.send_message(channel, custom_message)
 
-                if 'content' in response:
-                    print(Fore.GREEN + f"[{bot.username}] => Sent to Channel {channel}: {custom_message}")
+                    if 'content' in response:
+                        print(Fore.GREEN + f"[{bot.username}] => Sent to Channel {channel}: {custom_message}")
 
-                time.sleep(message_delay)  # Delay after each message
+                    time.sleep(message_delay)
 
-            print(Fore.YELLOW + f"[INFO] Waiting for {token_delay} seconds before processing the next token...")
-            time.sleep(token_delay)  # Delay after processing each token
+                print(Fore.YELLOW + f"[INFO] Waiting for {token_delay} seconds before processing the next token...")
+                time.sleep(token_delay)
+
+            except Exception as e:
+                print(Fore.RED + f"[CRITICAL ERROR] Skipping token due to error: {type(e).__name__}: {e}")
 
         print(Fore.YELLOW + f"[INFO] Waiting for {restart_delay} seconds before restarting...")
-        time.sleep(restart_delay)  # Delay before restarting
+        time.sleep(restart_delay)
 
 if __name__ == '__main__':
     try:
