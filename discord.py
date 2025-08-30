@@ -22,8 +22,7 @@ ascii_art = r"""
 
 print(Fore.CYAN + ascii_art)
 print(Fore.GREEN + "Simple DiscordBot")
-print(Fore.MAGENTA + "github.com/reciativonika")
-print("")
+print(Fore.MAGENTA + "github.com/reciativonika\n")
 
 class DiscordBot:
     def __init__(self, token):
@@ -32,8 +31,11 @@ class DiscordBot:
         self.username = self.get_username()
 
     def get_username(self):
-        response = requests.get(f"{self.base_url}/users/@me", headers=self.headers).json()
-        return f"{response['username']}#{response['discriminator']}"
+        try:
+            response = requests.get(f"{self.base_url}/users/@me", headers=self.headers).json()
+            return f"{response['username']}#{response['discriminator']}"
+        except Exception as e:
+            return f"UnknownUser ({type(e).__name__})"
 
     def send_message(self, channel_id, message):
         payload = {'content': message}
@@ -46,8 +48,7 @@ def load_config(file_path='config.yaml'):
 
 def load_messages(file_path='chat.txt'):
     with open(file_path, 'r') as msg_file:
-        messages = [line.strip() for line in msg_file if line.strip()]
-    return messages
+        return [line.strip() for line in msg_file if line.strip()]
 
 def main():
     config = load_config()
@@ -68,6 +69,7 @@ def main():
     token_delay = config.get('token_delay', 5)
     message_delay = config.get('message_delay', 2)
     restart_delay = config.get('restart_delay', 10)
+    send_mode = config.get('send_mode', 'random').lower()
 
     while True:
         for token in config['token']:
@@ -75,12 +77,17 @@ def main():
                 bot = DiscordBot(token)
 
                 for channel in config['channel_id']:
-                    
-                    custom_message = random.choice(messages)
+                    if send_mode == 'bulk':
+                        custom_message = '\n'.join(messages)
+                    else:
+                        custom_message = random.choice(messages)
+
                     response = bot.send_message(channel, custom_message)
 
                     if 'content' in response:
                         print(Fore.GREEN + f"[{bot.username}] => Sent to Channel {channel}: {custom_message}")
+                    else:
+                        print(Fore.RED + f"[{bot.username}] => Failed to send message to Channel {channel}: {response}")
 
                     time.sleep(message_delay)
 
@@ -96,5 +103,9 @@ def main():
 if __name__ == '__main__':
     try:
         main()
+    except KeyboardInterrupt:
+        print(Fore.CYAN + "\n[INFO] Bot interrupted by user. Shutting down...")
+        sys.exit(0)
     except Exception as e:
         print(Fore.RED + f"[CRITICAL ERROR] {type(e).__name__}: {e}")
+        sys.exit(1)
