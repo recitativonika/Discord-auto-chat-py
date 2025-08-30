@@ -37,6 +37,7 @@ This is a simple Discord bot script that allows you to send messages to multiple
     token_delay: 5  # Delay for each token processing in seconds
     message_delay: 2  # Delay for each message sent in seconds
     restart_delay: 10  # Delay before restarting the bot in seconds
+    send_mode: "bulk"  # Options: "random" or "bulk"
     ```
     Get the token for your discord account with this, pasten in url bar when you open discord web
     ```
